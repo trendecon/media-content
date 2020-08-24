@@ -2,8 +2,10 @@ library(gtrendsR)
 library(xts)
 library(tsbox)
 library(dygraphs)
+remotes::install_github("trendecon/trendecon")
+library(trendecon)
 
-# Creating graph for article 1 
+# Creating graph for article 1 ----
 
 blog_ar_1 <- gtrends(keyword = c("WC Papier","Rezession"), 
                         geo = "CH", 
@@ -43,4 +45,21 @@ ts_dygraphs(ts_c(
   dySeries("WC Papier", strokePattern = "dashed") %>%
   dyAxis("x", drawGrid = FALSE)
 
+# Creating graph for article 2 ----
+
+blog_ar_2 <- ts_gtrends(keyword = c("Festival","Tickets kaufen", "Hallenstadion", "Konzert"),
+                        geo = "CH", 
+                        time = "today 12-m")
+
+
+# csv to create graph on webpage for article 1 
+write.csv(blog_ar_2, 
+          file = file.path("data_examples","article_2.csv"),
+          row.names = FALSE)
+
+# Creating example how it looks the graph
+ts_dygraphs(blog_ar_2) %>%
+  dyAxis("y", label = "Hits (index from Google trends)") %>% 
+  dySeries("Konzert", strokePattern = "dashed") %>%
+  dyAxis("x", drawGrid = FALSE)
 
