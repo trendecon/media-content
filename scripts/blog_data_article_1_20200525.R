@@ -52,7 +52,7 @@ blog_ar_2 <- ts_gtrends(keyword = c("Festival","Tickets kaufen", "Hallenstadion"
                         time = "today 12-m")
 
 
-# csv to create graph on webpage for article 1 
+# csv to create graph on webpage for article 2 
 write.csv(blog_ar_2, 
           file = file.path("data_examples","article_2.csv"),
           row.names = FALSE)
@@ -63,3 +63,20 @@ ts_dygraphs(blog_ar_2) %>%
   dySeries("Konzert", strokePattern = "dashed") %>%
   dyAxis("x", drawGrid = FALSE)
 
+
+# Creating graph for article 3 ----
+blog_ar_3 <- ts_gtrends(keyword = c("Restaurant", "Bar", "Rezept", "Sauerteig"),
+                             geo = "CH", 
+                             time = "today 12-m")
+
+# csv to create graph on webpage for article 3
+write.csv(blog_ar_3, 
+          file = file.path(".","data_examples","article_3.csv"),
+          row.names = FALSE)
+
+# Creating example how it looks the graph
+ts_dygraphs(blog_ar_3,) %>%
+  dyAxis("y", label = "Hits (index from Google trends)") %>% 
+  dySeries("Restaurant", strokePattern = "dashed") %>%
+  dySeries("Bar", strokePattern = "dashed") %>%
+  dyAxis("x", drawGrid = FALSE)
