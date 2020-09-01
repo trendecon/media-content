@@ -97,17 +97,17 @@ ar_3_mobility_kof <- ar_3_mobility_kof[variable == "mobil" & trans == "meanvar"]
 ar_3_mobility_kof <- ar_3_mobility_kof[, `:=`(variable = NULL , trans = NULL)]
 ar_3_mobility_kof <- as.xts(ar_3_mobility_kof)
 ar_3_mobility_kof_r <- (ar_3_mobility_kof-min(ar_3_mobility_kof))/(max(ar_3_mobility_kof)-min(ar_3_mobility_kof))
-names(ar_3_mobility_kof_r) <- "kof_mob"
+write.zoo(ar_3_mobility_kof_r, 
+          file = file.path("data_examples","article_3_a_mobility_kof.csv"))
+
 
 mobility_sa <- as.xts(zoo::read.csv.zoo("https://raw.githubusercontent.com/trendecon/data/master/data/ch/mobility_sa.csv",index.column = 1))
 mobility_trendecon <- as.xts(mobility_sa["2020-01-07/2020-08-24"])
 mobility_trendecon_r <- (mobility_trendecon-min(mobility_trendecon))/(max(mobility_trendecon)-min(mobility_trendecon))
 
 mobility <- cbind(ar_3_mobility_kof_r,mobility_trendecon_r)
-write.zoo(mobility, 
-          file = file.path("data_examples","article_3_a_mobility.csv"))
 
-
+ts_dygraphs(mobility) %>%
   dyAxis("x", drawGrid = FALSE)%>%
   dySeries("value", label = "KOF mobility index") %>%
   dySeries("mobility_trendecon_r", label = "trendecon mobility index", strokePattern = "dashed") %>%
