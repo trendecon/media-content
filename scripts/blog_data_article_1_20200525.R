@@ -98,7 +98,10 @@ ar_3_mobility_kof <- ar_3_mobility_kof[, `:=`(variable = NULL , trans = NULL)]
 ar_3_mobility_kof <- as.xts(ar_3_mobility_kof)
 ar_3_mobility_kof_r <- (ar_3_mobility_kof-min(ar_3_mobility_kof))/(max(ar_3_mobility_kof)-min(ar_3_mobility_kof))
 write.zoo(ar_3_mobility_kof_r, 
-          file = file.path("data_examples","article_3_a_mobility_kof.csv"))
+          file = file.path("data_examples","article_3_a_mobility_kof.csv"),
+          index.name = "time", 
+          quote = FALSE,
+          sep = ",")
 
 
 mobility_sa <- as.xts(zoo::read.csv.zoo("https://raw.githubusercontent.com/trendecon/data/master/data/ch/mobility_sa.csv",index.column = 1))
