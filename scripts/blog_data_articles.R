@@ -2,8 +2,27 @@ library(gtrendsR)
 library(xts)
 library(tsbox)
 library(dygraphs)
-remotes::install_github("trendecon/trendecon")
+#remotes::install_github("trendecon/trendecon")
 library(trendecon)
+library(dygraphs)
+library(dplyr)
+library(readr)
+library(htmlwidgets)
+
+#Functions to compare years with dygraph
+today <- as.character(Sys.Date())
+
+#the axis label is passed as a date, this function outputs only the month of the date
+getMonth <- 'function(d){
+               var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+               return monthNames[d.getMonth()];
+               }'
+
+#the x values are passed as milliseconds, turn them into a date and extract month and day
+getMonthDay <- 'function(d) {
+                var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                date = new Date(d);
+                return monthNames[date.getMonth()] + " " +date.getDate(); }'
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 # Creating graph for article 1 ----
@@ -163,4 +182,88 @@ ts_dygraphs(blog_ar_3_a[blog_ar_3_a$id=="Bus Ticket" | blog_ar_3_a$id=="Zugticke
               ts_frequency("month")) %>%
   dyAxis("y", label = "Hits (index from Google trends)") %>% 
   dyAxis("x", drawGrid = FALSE)
+
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# Creating graphs for article 4 ----
+# shifts in demands
+
+blog_ar_4 <- ts_gtrends(keyword = c("Brot backen",
+                                      "Essen bestellen",
+                                      "Netflix"),
+                          geo = "CH", 
+                          time = "2018-01-01 2020-08-24")
+
+write.csv(blog_ar_4, 
+          file = file.path("data_examples","article_4.csv"),
+          row.names = FALSE)
+
+# Creating example how it looks the graph
+
+ts_dygraphs(blog_ar_4 %>% 
+              ts_frequency("month")) %>%
+  dyAxis("y", label = "Hits (index from Google trends)") %>% 
+  dyAxis("x", drawGrid = FALSE)
+
+
+#%%% comparisson trendecon indices
+
+food <- read.csv("https://raw.githubusercontent.com/trendecon/data/master/data/ch/fooddelivery_sa.csv") %>%
+  select(time,value) %>%
+  ts_xts()
+
+food_2018 <- ts_data.frame(food["2018/2018-09-01"])%>% 
+  mutate(time = as.Date(gsub("2018","2020",time))) %>% 
+  ts_xts()
+
+food_2019 <- ts_data.frame(food["2019/2019-09-01"])%>% 
+  mutate(time = as.Date(gsub("2019","2020",time))) %>% 
+  ts_xts()
+
+food_2020 <- ts_data.frame(food["2020/2020-09-01"]) %>% 
+  ts_xts()
+
+dygraph(ts_c(
+  `2018` = food_2018,
+  `2019` = food_2019,
+  `2020` = food_2020
+)) %>%
+  dyAxis("x",valueFormatter=JS(getMonthDay), axisLabelFormatter=JS(getMonth)) %>% 
+  dySeries("2018", strokePattern = "dotdash") %>%
+  dySeries("2019", strokePattern = "dashed") %>%
+  dySeries("2020", strokePattern = NULL) %>%
+  dyAxis("x", drawGrid = FALSE) %>% 
+  dyAxis("y", label = "Food delivery trendecon index")
+
+
+garden <- read.csv("https://raw.githubusercontent.com/trendecon/data/master/data/ch/garden_sa.csv") %>%
+  select(time,value) %>%
+  ts_xts()
+
+garden_2018 <- ts_data.frame(garden["2018/2018-09-01"])%>% 
+  mutate(time = as.Date(gsub("2018","2020",time))) %>% 
+  ts_xts()
+
+garden_2019 <- ts_data.frame(garden["2019/2019-09-01"])%>% 
+  mutate(time = as.Date(gsub("2019","2020",time))) %>% 
+  ts_xts()
+
+garden_2020 <- ts_data.frame(garden["2020/2020-09-01"]) %>% 
+  ts_xts()
+
+dygraph(ts_c(
+  `2018` = garden_2018,
+  `2019` = garden_2019,
+  `2020` = garden_2020
+)) %>%
+  dyAxis("x",valueFormatter=JS(getMonthDay), axisLabelFormatter=JS(getMonth)) %>% 
+  dySeries("2018", strokePattern = "dotdash") %>%
+  dySeries("2019", strokePattern = "dashed") %>%
+  dySeries("2020", strokePattern = NULL) %>%
+  dyAxis("x", drawGrid = FALSE) %>% 
+  dyAxis("y", label = "Gardening and home improvement trendecon index")
+
+
+
+
 
