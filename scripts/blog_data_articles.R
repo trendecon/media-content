@@ -263,7 +263,34 @@ dygraph(ts_c(
   dyAxis("x", drawGrid = FALSE) %>% 
   dyAxis("y", label = "Gardening and home improvement trendecon index")
 
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# Creating graphs for article 6 ----
+# Football is back
 
+blog_ar_6 <- ts_gtrends(keyword = c("spielplan",
+                                    "saisonkarte",
+                                    "fallzahlen",
+                                    "maskenpflicht"),
+                        geo = "CH", 
+                        time = "2016-01-01 2020-09-17")
 
+write.csv(blog_ar_6, 
+          file = file.path("data_examples","article_6.csv"),
+          row.names = FALSE)
+
+# Cultural Event indicator
+social_sa <- read.csv("https://raw.githubusercontent.com/trendecon/data/master/data/ch/social_sa.csv") %>%
+  select(time,value) %>%
+  ts_xts()
+dm_social_sa <- social_sa %>%
+  ts_frequency("month")
+dm_social_sa_2016_2020 <- ts_data.frame(cultural["2016/2020-09-17"]) %>% 
+  ts_xts()
+
+# Creating example how it looks the graph
+ts_dygraphs(ts_c(blog_ar_6,`Cultural Event TrendEcon Index`=dm_social_sa_2016_2020) %>% 
+              ts_frequency("month")) %>%
+  dyAxis("y", label = "Hits (index from Google trends)") %>% 
+  dyAxis("x", drawGrid = FALSE)
 
 
