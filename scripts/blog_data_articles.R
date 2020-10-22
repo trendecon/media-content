@@ -287,10 +287,78 @@ dm_social_sa <- social_sa %>%
 dm_social_sa_2016_2020 <- ts_data.frame(cultural["2016/2020-09-17"]) %>% 
   ts_xts()
 
-# Creating example how it looks the graph
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# Creating graphs for article 7 ----
+# How do Swiss consumers cope with masks
+
 ts_dygraphs(ts_c(blog_ar_6,`Cultural Event TrendEcon Index`=dm_social_sa_2016_2020) %>% 
               ts_frequency("month")) %>%
   dyAxis("y", label = "Hits (index from Google trends)") %>% 
   dyAxis("x", drawGrid = FALSE)
 
+
+blog_ar_7_CH <- ts_gtrends(keyword = c("öffnungszeiten", 
+                                       "shopping center",
+                                       "maskenpflicht",
+                                       "coop at home",
+                                       "le shop",
+                                       "galaxus"),
+                           geo = c("CH"), 
+                           time = "2018-10-20 2020-10-21")
+
+blog_ar_7_ZH <- ts_gtrends(keyword = c("öffnungszeiten", 
+                                       "shopping center",
+                                       "maskenpflicht"),
+                           geo = c("CH-ZH"), 
+                           time = "2018-10-20 2020-10-21")
+
+# csv to create graph on webpage for article 3
+write.csv(blog_ar_7_CH, 
+          file = file.path("..","data_examples","article_7_CH.csv"),
+          row.names = FALSE)
+write.csv(blog_ar_7_ZH, 
+          file = file.path("..","data_examples","article_7_ZH.csv"),
+          row.names = FALSE)
+
+# Overview Zürich vs CH
+ts_dygraphs(ts_c(
+  `CH` = blog_ar_7_CH[blog_ar_7_CH$id=="maskenpflicht",],
+  `ZH` = blog_ar_7_ZH[blog_ar_7_ZH$id=="maskenpflicht",]
+)) %>%
+  dyRoller(rollPeriod = 4)%>% 
+  dyAxis("y", label = "Hits (index from Google trends)") %>% 
+  dySeries("maskenpflicht", label = "\"maskenpflicht\" searched in CH") %>%
+  dySeries("maskenpflicht.1", label= "\"maskenpflicht\" searched in ZH only", strokePattern = "dashed") %>%
+  dyEvent("2020-3-16", "Start Lockdown    ", labelLoc = "top") %>%
+  dyEvent("2020-4-27", "Reopening - Phase I    ", labelLoc = "top") %>%
+  dyEvent("2020-7-6", "Mask Measure CH - Public transport    ", labelLoc = "top") %>% 
+  dyEvent("2020-8-27", "Mask Measure ZH - Retail    ", labelLoc = "top") %>% 
+  dyEvent("2020-10-19", "Mask Measure CH - Retail    ", labelLoc = "top") %>% 
+  dyAxis("x", drawGrid = FALSE)
+
+
+# Creating example how it looks the graph
+ts_dygraphs(ts_c(blog_ar_7_CH[blog_ar_7_CH$id=="öffnungszeiten" | blog_ar_7_CH$id=="shopping center",], 
+                 blog_ar_7_ZH[blog_ar_7_ZH$id=="öffnungszeiten" | blog_ar_7_ZH$id=="shopping center",])) %>%
+  dyRoller(rollPeriod = 4)%>% 
+  dyAxis("y", label = "Hits (index from Google trends)") %>% 
+  dySeries("öffnungszeiten", label = "\"öffnungszeiten\" searched in CH") %>%
+  dySeries("öffnungszeiten.1", label = "\"öffnungszeiten\" searched in ZH", strokePattern = "dashed") %>%
+  dySeries("shopping center", label = "\"shopping center\" searched in CH") %>%
+  dySeries("shopping center.1", label = "\"shopping center\" searched in ZH", strokePattern = "dashed") %>%
+  dyEvent("2020-3-16", "Start Lockdown    ", labelLoc = "top") %>%
+  dyEvent("2020-4-27", "Reopening - Phase I    ", labelLoc = "top") %>%
+  dyEvent("2020-7-6", "Mask Measure CH - Public transport    ", labelLoc = "top") %>% 
+  dyEvent("2020-8-27", "Mask Measure ZH - Retail    ", labelLoc = "top") %>%
+  dyEvent("2020-10-19", "Mask Measure CH - Retail    ", labelLoc = "top") %>% 
+  dyAxis("x", drawGrid = FALSE)
+
+ts_dygraphs(blog_ar_7_CH[blog_ar_7_CH$id=="coop at home" | blog_ar_7_CH$id=="le shop" | blog_ar_7_CH$id=="galaxus",]) %>%
+  dyAxis("y", label = "Hits (index from Google trends)") %>%
+  dyEvent("2020-3-16", "Start Lockdown    ", labelLoc = "top") %>%
+  dyEvent("2020-4-27", "Reopening - Phase I    ", labelLoc = "top") %>%
+  dyEvent("2020-7-6", "Mask Measure CH - Public transport    ", labelLoc = "top") %>% 
+  dyEvent("2020-8-27", "Mask Measure ZH - Retail   ", labelLoc = "top") %>%
+  dyEvent("2020-10-19", "Mask Measure CH - Retail    ", labelLoc = "top") %>% 
+  dyAxis("x", drawGrid = FALSE)
 
