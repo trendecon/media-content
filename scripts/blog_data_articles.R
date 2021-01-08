@@ -362,3 +362,50 @@ ts_dygraphs(blog_ar_7_CH[blog_ar_7_CH$id=="coop at home" | blog_ar_7_CH$id=="le 
   dyEvent("2020-10-19", "Mask Measure CH - Retail    ", labelLoc = "top") %>% 
   dyAxis("x", drawGrid = FALSE)
 
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# Creating graphs for article 9 ----
+# The employee's best companion
+blog_ar_9_CH <- ts_gtrends(keyword = c("qualipet", 
+                                       "meerschweinchen",
+                                       "tierheim",
+                                       "katze kaufen",
+                                       "hund kaufen"),
+                           geo = c("CH"), 
+                           time = "2016-01-01 2021-01-07")
+write.csv(blog_ar_9_CH, 
+          file = file.path("..","data_examples","article_9.csv"),
+          row.names = FALSE)
+
+# Chart 1: long-term
+ts_dygraphs(blog_ar_9_CH[blog_ar_9_CH$id=="qualipet" | blog_ar_9_CH$id=="tierheim" | blog_ar_9_CH$id=="meerschweinchen",]) %>%
+  dyRoller(rollPeriod = 8)%>% 
+  dyAxis("y", label = "Hits (index from Google trends)") %>%
+  #dyEvent("2020-2-28", "Declaration of 'Special Situation'", labelLoc = "bottom")%>%
+  #dyEvent("2020-3-16", "Declaration of 'Extraordinary Situation'", labelLoc = "bottom") %>%
+  #dyEvent("2020-4-27", "Shutdown Easing Phase 1", labelLoc = "bottom") %>%
+  #dyEvent("2020-5-11", "Shutdown Easing Phase 2", labelLoc = "bottom") %>%
+  #dyEvent("2020-6-8", "Shutdown Easing Phase 3", labelLoc = "bottom") %>%
+  #dyEvent("2020-6-22", "End of 'Extraordinary Situation'", labelLoc = "bottom") %>%
+  #dyEvent("2020-10-19", "Mask wearing obligation extended", labelLoc = "bottom") %>%
+  #dyEvent("2020-10-28", "Reinforce containment measures", labelLoc = "bottom") %>%
+  dyAxis("x", drawGrid = FALSE)
+
+# Chart 2: pandemic
+blog_ar_9_CH_cut <- ts_data.frame(blog_ar_9_CH["2019/2019-09-01"])%>% 
+  mutate(time = as.Date(gsub("2020","2021",time))) %>% 
+  ts_xts()
+
+ts_dygraphs(blog_ar_9_CH[blog_ar_9_CH$id=="hund kaufen" | blog_ar_9_CH$id=="katze kaufen" | blog_ar_9_CH$id=="meerschweinchen",]) %>%
+  dyRoller(rollPeriod = 4)%>%
+  dyRangeSelector(dateWindow = c("2020-01-01", "2021-01-01"))%>%
+  dyAxis("y", label = "Hits (index from Google trends)") %>%
+  dyEvent("2020-2-28", "Declaration of 'Special Situation'", labelLoc = "bottom")%>%
+  dyEvent("2020-3-16", "Declaration of 'Extraordinary Situation'", labelLoc = "bottom") %>%
+  dyEvent("2020-4-27", "Shutdown Easing Phase 1", labelLoc = "bottom") %>%
+  dyEvent("2020-5-11", "Shutdown Easing Phase 2", labelLoc = "bottom") %>%
+  dyEvent("2020-6-8", "Shutdown Easing Phase 3", labelLoc = "bottom") %>%
+  dyEvent("2020-6-22", "End of 'Extraordinary Situation'", labelLoc = "bottom") %>%
+  dyEvent("2020-10-19", "Mask wearing obligation extended", labelLoc = "bottom") %>%
+  dyEvent("2020-10-28", "Reinforce containment measures", labelLoc = "bottom") %>%
+  dyAxis("x", drawGrid = FALSE)
